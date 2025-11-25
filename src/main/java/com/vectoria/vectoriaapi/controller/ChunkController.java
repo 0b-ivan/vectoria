@@ -86,6 +86,7 @@ public class ChunkController {
         int maxWords = (request.getMaxWords() != null) ? request.getMaxWords() : 300;
         int overlapWords = (request.getOverlapWords() != null) ? request.getOverlapWords() : 50;
 
+        // 1) Chunks speichern
         var savedChunks = chunkService.chunkAndStore(
                 request.getDocumentId(),
                 request.getText(),
@@ -93,11 +94,18 @@ public class ChunkController {
                 overlapWords
         );
 
+        // 2) Embeddings für alle Chunks erzeugen
+        int embeddedCount = embeddingService.embedAllChunksForDocument(request.getDocumentId());
+
+        // Optional: DTO erweitern, z.B. noch embeddedCount zurückgeben
         ChunkUploadResponse response =
                 new ChunkUploadResponse(request.getDocumentId(), savedChunks.size());
+        // falls du ein Feld dafür ergänzt hast:
+        // response.setEmbeddedCount(embeddedCount);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
     /**
      * Holt alle Chunks eines Dokuments in Reihenfolge.
