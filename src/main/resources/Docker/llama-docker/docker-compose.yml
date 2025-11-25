@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  llama:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    command: [
+      "--model", "/models/qwen2.5-1.5b.gguf",
+      "--host", "0.0.0.0",
+      "--port", "8000",
+      "--ctx-size", "4096"
+    ]
+    volumes:
+      - ./models:/models
+    ports:
+      - "8000:8000"
+
+  litellm:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./litellm-config.yaml:/app/litellm-config.yaml
+    command: >
+      sh -c "pip install --no-cache-dir 'litellm[proxy]' &&
+             litellm --config /app/litellm-config.yaml --port 4000"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - llama

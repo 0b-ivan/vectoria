@@ -14,3 +14,10 @@ spring:
 
 server:
   port: 8080
+
+vectoria:
+  llm:
+    base-url: http://localhost:4000
+    api-key: dummy          # falls du im LiteLLM noch Auth einbaust
+    chat-model: qwen-local-chat
+    embedding-model: qwen-local-embed

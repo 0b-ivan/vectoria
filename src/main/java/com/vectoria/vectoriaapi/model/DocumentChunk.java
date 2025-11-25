@@ -3,6 +3,7 @@ package com.vectoria.vectoriaapi.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
+
 @Entity
 @Table(name = "document_chunks")
 public class DocumentChunk {
@@ -15,25 +16,36 @@ public class DocumentChunk {
     private String documentId;
 
     @Column(name = "chunk_index", nullable = false)
-    private Integer chunkIndex;
+    private int chunkIndex;
 
-    @Column(name = "content", nullable = false, columnDefinition = "text")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "timestamptz")
-    private Instant createdAt = Instant.now();
+    @Column(name = "created_at")
+    private Instant createdAt;
 
-    // Required empty constructor for JPA
-    public DocumentChunk() {}
+    @Column(name = "embedding_json", columnDefinition = "TEXT")
+    private String embeddingJson;
 
-    // Helper constructor for easier creation
-    public DocumentChunk(String documentId, Integer chunkIndex, String content) {
+    // 🔹 WICHTIG: Default-Konstruktor für Hibernate
+    public DocumentChunk() {
+    }
+
+    // optional: eigener All-Args-Konstruktor
+    public DocumentChunk(String documentId, int chunkIndex, String content) {
         this.documentId = documentId;
         this.chunkIndex = chunkIndex;
         this.content = content;
     }
 
-    // === GETTER / SETTER ===
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
+    }
+
+    // --- Getter/Setter ---
 
     public Long getId() {
         return id;
@@ -47,11 +59,11 @@ public class DocumentChunk {
         this.documentId = documentId;
     }
 
-    public Integer getChunkIndex() {
+    public int getChunkIndex() {
         return chunkIndex;
     }
 
-    public void setChunkIndex(Integer chunkIndex) {
+    public void setChunkIndex(int chunkIndex) {
         this.chunkIndex = chunkIndex;
     }
 
@@ -69,5 +81,13 @@ public class DocumentChunk {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getEmbeddingJson() {
+        return embeddingJson;
+    }
+
+    public void setEmbeddingJson(String embeddingJson) {
+        this.embeddingJson = embeddingJson;
     }
 }

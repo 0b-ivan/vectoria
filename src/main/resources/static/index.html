@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>Vectoria – Chunk Uploader & Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            background: #020617;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: 0.05em;
+        }
+
+        header span {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        main {
+            padding: 1.5rem 2rem 3rem;
+            display: grid;
+            grid-template-columns: 2fr 2fr;
+            grid-template-rows: auto auto;
+            gap: 1.5rem;
+        }
+
+        section {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 1rem;
+            padding: 1.2rem 1.4rem;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.7);
+        }
+
+        section h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            margin-bottom: 0.6rem;
+        }
+
+        section p.hint {
+            margin-top: 0;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            margin: 0.4rem 0 0.2rem;
+            color: #e5e7eb;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.5rem 0.6rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.9);
+            color: #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6);
+        }
+
+        .row {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .row > div {
+            flex: 1;
+        }
+
+        button {
+            margin-top: 0.8rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        button.secondary {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            color: #e5e7eb;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        small {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .status {
+            margin-top: 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .status.ok {
+            color: #4ade80;
+        }
+
+        .status.error {
+            color: #f97373;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        th, td {
+            padding: 0.4rem 0.5rem;
+            border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+            vertical-align: top;
+        }
+
+        th {
+            text-align: left;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        tr:hover td {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.8rem;
+        }
+
+        #chunksTableContainer {
+            max-height: 260px;
+            overflow: auto;
+            margin-top: 0.6rem;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+        }
+
+        /* Chat-Bereich */
+        #chat-history {
+            margin-top: 0.6rem;
+            padding: 0.6rem;
+            border-radius: 0.7rem;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent),
+                        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.08), transparent),
+                        rgba(15, 23, 42, 0.9);
+            max-height: 260px;
+            overflow-y: auto;
+            font-size: 0.86rem;
+        }
+
+        .chat-message {
+            margin-bottom: 0.7rem;
+        }
+
+        .chat-message.user {
+            text-align: right;
+        }
+
+        .chat-bubble {
+            display: inline-block;
+            padding: 0.4rem 0.7rem;
+            border-radius: 0.9rem;
+            max-width: 80%;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: #0b1120;
+        }
+
+        .chat-message.assistant .chat-bubble {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+        }
+
+        .chat-meta {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-bottom: 0.15rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 0.8rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            border-top: 1px solid rgba(30, 64, 175, 0.5);
+            background: #020617;
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1>Vectoria Console</h1>
+        <span>Chunking · Postgres · Local LLM (Qwen via LiteLLM)</span>
+    </div>
+</header>
+
+<main>
+    <!-- Upload & Chunking -->
+    <section>
+        <h2>1. Text in Chunks zerlegen & speichern</h2>
+        <p class="hint">
+            Gib eine <span class="mono">documentId</span> und einen Text ein. Vectoria chunked ihn und speichert die Chunks in Postgres.
+        </p>
+
+        <label for="documentId">Document ID</label>
+        <input id="documentId" type="text" placeholder="z.B. handbuch-v1" />
+
+        <label for="textInput">Text</label>
+        <textarea id="textInput" placeholder="Füge hier deinen Text ein…"></textarea>
+
+        <div class="row">
+            <div>
+                <label for="maxWords">Max Words je Chunk</label>
+                <input id="maxWords" type="number" value="120" min="10" />
+            </div>
+            <div>
+                <label for="overlapWords">Overlap</label>
+                <input id="overlapWords" type="number" value="20" min="0" />
+            </div>
+        </div>
+
+        <button id="chunkButton" onclick="uploadChunks()">
+            🚀 Chunk & speichern
+        </button>
+
+        <div id="uploadStatus" class="status"></div>
+    </section>
+
+    <!-- Dokument-Browser -->
+    <section>
+        <h2>2. Dokumente & Chunks ansehen</h2>
+        <p class="hint">
+            Lade existierende <span class="mono">documentId</span>s und inspiziere die dazugehörigen Chunks.
+        </p>
+
+        <button class="secondary" onclick="loadDocumentIds()">🔄 Dokument-IDs laden</button>
+
+        <label for="documentSelect">Verfügbare Dokumente</label>
+        <select id="documentSelect" onchange="loadChunksForSelectedDoc()">
+            <option value="">-- noch nichts geladen --</option>
+        </select>
+
+        <div id="chunksTableContainer">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Chunk Index</th>
+                    <th>Content (gekürzt)</th>
+                    <th>Created</th>
+                </tr>
+                </thead>
+                <tbody id="chunksTableBody">
+                <tr>
+                    <td colspan="4">
+                        <small>Keine Chunks geladen.</small>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="browserStatus" class="status"></div>
+    </section>
+
+    <!-- Chat mit lokalem LLM -->
+    <section style="grid-column: 1 / -1;">
+        <h2>3. Chat mit lokalem LLM</h2>
+        <p class="hint">
+            Hier sprichst du direkt mit deinem lokalen Modell (Qwen über LiteLLM). Später können wir hier Kontext aus Chunks anhängen (RAG).
+        </p>
+
+        <label for="chatPrompt">Nachricht an Vectoria-LLM</label>
+        <textarea id="chatPrompt" placeholder="Frag etwas wie: 'Erklär mir kurz, was Vectoria macht.'"></textarea>
+
+        <button id="chatButton" onclick="sendChat()">
+            💬 Frage senden
+        </button>
+        <span id="chatLoading" style="font-size: 0.8rem; margin-left: 0.4rem; display: none;">…denkt…</span>
+
+        <div id="chat-history"></div>
+    </section>
+</main>
+
+<footer>
+    Vectoria · Local RAG Playground · v0.1
+</footer>
+
+<script>
+    const apiBase = "http://localhost:8080";
+
+    async function uploadChunks() {
+        const documentId = document.getElementById("documentId").value.trim();
+        const text = document.getElementById("textInput").value.trim();
+        const maxWords = parseInt(document.getElementById("maxWords").value, 10);
+        const overlapWords = parseInt(document.getElementById("overlapWords").value, 10);
+        const statusEl = document.getElementById("uploadStatus");
+        const button = document.getElementById("chunkButton");
+
+        statusEl.textContent = "";
+        statusEl.className = "status";
+
+        if (!documentId || !text) {
+            statusEl.textContent = "Bitte Document ID und Text ausfüllen.";
+            statusEl.classList.add("error");
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "⏳ Chunking läuft…";
+
+        try {
+            const res = await fetch(apiBase + "/api/chunks/from-text", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    documentId,
+                    text,
+                    maxWords,
+                    overlapWords
+                })
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error("HTTP " + res.status + ": " + txt);
+            }
+
+            const data = await res.json(); // erwartet z.B. { documentId, chunksSaved }
+
+            statusEl.textContent = `✅ ${data.chunksSaved ?? "?"} Chunks für Dokument "${data.documentId ?? documentId}" gespeichert.`;
+            statusEl.classList.add("ok");
+
+            // Nach dem Upload direkt die IDs neu laden
+            loadDocumentIds();
+        } catch (e) {
+            console.error(e);
+            statusEl.textContent = "Fehler beim Chunking: " + e.message;
+            statusEl.classList.add("error");
+        } finally {
+            button.disabled = false;
+            button.textContent = "🚀 Chunk & speichern";
+        }
+    }
+
+    async function loadDocumentIds() {
+        const statusEl = document.getElementById("browserStatus");
+        const select = document.getElementById("documentSelect");
+        const chunksTbody = document.getElementById("chunksTableBody");
+
+        statusEl.textContent = "";
+        statusEl.className = "status";
+
+        select.innerHTML = '<option value="">lädt…</option>';
+        chunksTbody.innerHTML = `
+            <tr><td colspan="4"><small>Noch keine Chunks geladen.</small></td></tr>
+        `;
+
+        try {
+            const res = await fetch(apiBase + "/api/chunks/documents");
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error("HTTP " + res.status + ": " + txt);
+            }
+
+            const ids = await res.json(); // erwartet: List<String>
+
+            if (!ids || ids.length === 0) {
+                select.innerHTML = '<option value="">keine Dokumente vorhanden</option>';
+                statusEl.textContent = "Keine Dokumente gefunden.";
+                statusEl.classList.add("error");
+                return;
+            }
+
+            select.innerHTML = "";
+            ids.forEach(id => {
+                const opt = document.createElement("option");
+                opt.value = id;
+                opt.textContent = id;
+                select.appendChild(opt);
+            });
+
+            statusEl.textContent = `✅ ${ids.length} Dokument-ID(s) geladen.`;
+            statusEl.classList.add("ok");
+
+            // Direkt Chunks des ersten Dokuments laden
+            loadChunksForSelectedDoc();
+        } catch (e) {
+            console.error(e);
+            statusEl.textContent = "Fehler beim Laden der Document-IDs: " + e.message;
+            statusEl.classList.add("error");
+            select.innerHTML = '<option value="">Fehler beim Laden</option>';
+        }
+    }
+
+    async function loadChunksForSelectedDoc() {
+        const select = document.getElementById("documentSelect");
+        const documentId = select.value;
+        const tbody = document.getElementById("chunksTableBody");
+        const statusEl = document.getElementById("browserStatus");
+
+        tbody.innerHTML = `
+            <tr><td colspan="4"><small>lädt Chunks…</small></td></tr>
+        `;
+
+        if (!documentId) {
+            tbody.innerHTML = `
+                <tr><td colspan="4"><small>Kein Dokument ausgewählt.</small></td></tr>
+            `;
+            return;
+        }
+
+        try {
+            const res = await fetch(apiBase + "/api/chunks/" + encodeURIComponent(documentId));
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error("HTTP " + res.status + ": " + txt);
+            }
+
+            const chunks = await res.json(); // erwartet: List<DocumentChunk>
+
+            if (!chunks || chunks.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="4"><small>Keine Chunks für dieses Dokument.</small></td></tr>
+                `;
+                statusEl.textContent = "Keine Chunks gefunden.";
+                statusEl.classList.add("error");
+                return;
+            }
+
+            tbody.innerHTML = "";
+            chunks.forEach((chunk, idx) => {
+                const tr = document.createElement("tr");
+
+                const created = chunk.createdAt ? new Date(chunk.createdAt).toLocaleString() : "-";
+                const shortContent = (chunk.content || "").length > 140
+                    ? chunk.content.slice(0, 140) + "…"
+                    : chunk.content;
+
+                tr.innerHTML = `
+                    <td class="mono">${idx + 1}</td>
+                    <td>${chunk.chunkIndex}</td>
+                    <td>${escapeHtml(shortContent)}</td>
+                    <td class="mono">${created}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            statusEl.textContent = `✅ ${chunks.length} Chunks für "${documentId}" geladen.`;
+            statusEl.classList.add("ok");
+        } catch (e) {
+            console.error(e);
+            tbody.innerHTML = `
+                <tr><td colspan="4"><small>Fehler beim Laden der Chunks.</small></td></tr>
+            `;
+            statusEl.textContent = "Fehler beim Laden der Chunks: " + e.message;
+            statusEl.classList.add("error");
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    // ---------- Chat mit lokalem LLM ----------
+
+    const chatHistoryEl = document.getElementById("chat-history");
+    const chatPromptEl = document.getElementById("chatPrompt");
+    const chatButtonEl = document.getElementById("chatButton");
+    const chatLoadingEl = document.getElementById("chatLoading");
+
+    async function sendChat() {
+        const prompt = chatPromptEl.value.trim();
+        if (!prompt) return;
+
+        // UI: User-Bubble direkt anzeigen
+        appendChatMessage("user", prompt);
+
+        // Eingabe leeren & Button sperren
+        chatPromptEl.value = "";
+        chatButtonEl.disabled = true;
+        chatLoadingEl.style.display = "inline";
+
+        try {
+            const res = await fetch(apiBase + "/api/llm/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error("HTTP " + res.status + ": " + txt);
+            }
+
+            const data = await res.json(); // { answer: "..." }
+
+            appendChatMessage("assistant", data.answer ?? "(keine Antwort erhalten)");
+        } catch (e) {
+            console.error(e);
+            appendChatMessage("assistant", "⚠️ Fehler bei der Anfrage: " + e.message);
+        } finally {
+            chatButtonEl.disabled = false;
+            chatLoadingEl.style.display = "none";
+            chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+        }
+    }
+
+    function appendChatMessage(role, text) {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("chat-message", role);
+
+        const meta = document.createElement("div");
+        meta.classList.add("chat-meta");
+        meta.textContent = role === "user" ? "Du" : "Vectoria-LLM";
+
+        const bubble = document.createElement("div");
+        bubble.classList.add("chat-bubble");
+        bubble.textContent = text;
+
+        wrapper.appendChild(meta);
+        wrapper.appendChild(bubble);
+        chatHistoryEl.appendChild(wrapper);
+        chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+    }
+
+    // Enter auf Chat-Textarea → mit Ctrl+Enter oder Shift+Enter multi-line,
+    // nur Enter: abschicken
+    chatPromptEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+            e.preventDefault();
+            sendChat();
+        }
+    });
+</script>
+</body>
+</html>

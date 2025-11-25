@@ -4,6 +4,7 @@ import com.vectoria.vectoriaapi.dto.ChunkUploadRequest;
 import com.vectoria.vectoriaapi.dto.ChunkUploadResponse;
 import com.vectoria.vectoriaapi.model.DocumentChunk;
 import com.vectoria.vectoriaapi.repository.DocumentChunkRepository;
+import com.vectoria.vectoriaapi.service.EmbeddingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,13 @@ public class ChunkController {
 
     private final DocumentChunkRepository repository;
     private final ChunkService chunkService;
+    private final EmbeddingService embeddingService;
 
-    public ChunkController(DocumentChunkRepository repository, ChunkService chunkService) {
+    public ChunkController(DocumentChunkRepository repository, ChunkService chunkService, EmbeddingService embeddingService) {
         this.repository = repository;
         this.chunkService = chunkService;
+        this.embeddingService = embeddingService;
+
     }
 
     /**
@@ -112,5 +116,14 @@ public class ChunkController {
         }
 
         return ResponseEntity.ok(chunks);
+    }
+
+    @GetMapping("/documents")
+    public List<String> getAllDocumentIds() {
+        return repository.findAll()
+                .stream()
+                .map(DocumentChunk::getDocumentId)
+                .distinct()
+                .toList();
     }
 }
