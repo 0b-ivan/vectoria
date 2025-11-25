@@ -2,4 +2,6 @@
 *.iml
 target/*
 .DS_Store
-/src/main/resources/Docker/models/
+src/main/resources/Docker/models/
+src/main/resources/Docker/models/*.gguf
+src/main/resources/Docker/llama-docker/models/*.gguf
