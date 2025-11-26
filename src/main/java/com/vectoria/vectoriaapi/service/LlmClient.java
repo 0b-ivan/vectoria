@@ -17,7 +17,7 @@ public class LlmClient {
         this.config = config;
     }
 
-    // 🚩 NEUE chat-METHODE: nimmt einen String, kein List<Map<...>>
+    // chat-METHODE: nimmt einen String, kein List<Map<...>>
     public String chat(String userMessage) {
         String url = config.getBaseUrl() + "/chat/completions";
 
@@ -61,9 +61,8 @@ public class LlmClient {
         return (String) message.get("content");
     }
 
-    // 🔹 NEU: Embeddings abrufen
     public List<Double> embed(String text) {
-        // 🔹 Einfaches lokales "Fake"-Embedding:
+        // - Einfaches lokales "Fake"-Embedding:
         // - feste Dimension (z.B. 256)
         // - wir hashen Tokens in diese Dimension
         // - zählt Vorkommen pro Bucket
