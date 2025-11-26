@@ -20,7 +20,6 @@ public class DocumentChunk {
     @Column(name = "content", nullable = false, columnDefinition = "text")
     private String content;
 
-    // 🔹 Hier speicherst du dein Embedding als JSON-String
     @Column(name = "embedding_json")
     private String embeddingJson;
 
