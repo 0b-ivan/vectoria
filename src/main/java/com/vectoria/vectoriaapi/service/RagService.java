@@ -45,7 +45,7 @@ public class RagService {
 
         for (DocumentChunk chunk : chunks) {
             if (chunk.getEmbeddingJson() == null || chunk.getEmbeddingJson().isBlank()) {
-                // optional: hier on-the-fly einbetten
+                // optional: hier on-the-fly Embedding
                 continue;
             }
 
