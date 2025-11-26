@@ -100,7 +100,6 @@ public class ChunkController {
         // Optional: DTO erweitern, z.B. noch embeddedCount zurückgeben
         ChunkUploadResponse response =
                 new ChunkUploadResponse(request.getDocumentId(), savedChunks.size());
-        // falls du ein Feld dafür ergänzt hast:
         // response.setEmbeddedCount(embeddedCount);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
