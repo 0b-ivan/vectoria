@@ -1,5 +1,10 @@
 package com.vectoria.vectoriaapi.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class TextChunkRequest {
 
     private String documentId;
@@ -10,35 +15,4 @@ public class TextChunkRequest {
     public TextChunkRequest() {
     }
 
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Integer getMaxWords() {
-        return maxWords;
-    }
-
-    public void setMaxWords(Integer maxWords) {
-        this.maxWords = maxWords;
-    }
-
-    public Integer getOverlapWords() {
-        return overlapWords;
-    }
-
-    public void setOverlapWords(Integer overlapWords) {
-        this.overlapWords = overlapWords;
-    }
 }

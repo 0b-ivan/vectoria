@@ -25,6 +25,13 @@ public class EmbeddingService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     *
+     * Embedding function -> temporary really stupid
+     *
+     * @return Zero or size of Chunks ti embedding
+     */
+
     @Transactional
     public int embedAllChunksForDocument(String documentId) {
         List<DocumentChunk> chunks =

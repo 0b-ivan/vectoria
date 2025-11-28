@@ -1,8 +1,12 @@
 package com.vectoria.vectoriaapi.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.Instant;
 
+@Getter
 @Entity
 @Table(name = "document_chunks")
 public class DocumentChunk {
@@ -11,18 +15,23 @@ public class DocumentChunk {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(name = "document_id", nullable = false)
     private String documentId;
 
+    @Setter
     @Column(name = "chunk_index", nullable = false)
     private int chunkIndex;
 
+    @Setter
     @Column(name = "content", nullable = false, columnDefinition = "text")
     private String content;
 
+    @Setter
     @Column(name = "embedding_json")
     private String embeddingJson;
 
+    @Setter
     @Column(name = "created_at")
     private Instant createdAt;
 
@@ -34,51 +43,5 @@ public class DocumentChunk {
         this.chunkIndex = chunkIndex;
         this.content = content;
         this.createdAt = Instant.now();
-    }
-
-    // Getter/Setter …
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    public int getChunkIndex() {
-        return chunkIndex;
-    }
-
-    public void setChunkIndex(int chunkIndex) {
-        this.chunkIndex = chunkIndex;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getEmbeddingJson() {
-        return embeddingJson;
-    }
-
-    public void setEmbeddingJson(String embeddingJson) {
-        this.embeddingJson = embeddingJson;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 }

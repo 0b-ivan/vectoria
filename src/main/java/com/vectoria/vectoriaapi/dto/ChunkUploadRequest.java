@@ -1,7 +1,12 @@
 package com.vectoria.vectoriaapi.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Setter
+@Getter
 public class ChunkUploadRequest {
 
     private String documentId;
@@ -10,19 +15,4 @@ public class ChunkUploadRequest {
     public ChunkUploadRequest() {
     }
 
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    public List<String> getChunks() {
-        return chunks;
-    }
-
-    public void setChunks(List<String> chunks) {
-        this.chunks = chunks;
-    }
 }

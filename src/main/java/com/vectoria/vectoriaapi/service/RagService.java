@@ -1,9 +1,12 @@
 package com.vectoria.vectoriaapi.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vectoria.vectoriaapi.model.DocumentChunk;
 import com.vectoria.vectoriaapi.repository.DocumentChunkRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,7 +35,7 @@ public class RagService {
             RagAnswer ra = new RagAnswer();
             ra.setDocumentId(documentId);
             ra.setQuestion(question);
-            ra.setAnswer("Für dieses Dokument wurden noch keine Chunks gefunden. Bitte zuerst Text hochladen und einbetten.");
+            ra.setAnswer("Für dieses Dokument wurden noch keine Chunks gefunden. Bitte zuerst Text hochladen und embedden.");
             ra.setUsedChunks(List.of());
             return ra;
         }
@@ -45,7 +48,7 @@ public class RagService {
 
         for (DocumentChunk chunk : chunks) {
             if (chunk.getEmbeddingJson() == null || chunk.getEmbeddingJson().isBlank()) {
-                // optional: hier on-the-fly Embedding
+                // optional: hier on-the-fly Embedding -> WIP
                 continue;
             }
 
@@ -56,7 +59,7 @@ public class RagService {
                 double score = cosineSimilarity(queryEmbedding, chunkEmbedding);
                 scored.add(new ScoredChunk(chunk, score));
             } catch (Exception e) {
-                // fehlerhafte Embeddings überspringen
+                //Logger Bauen -> WIP
             }
         }
 
@@ -141,81 +144,22 @@ public class RagService {
 
     private record ScoredChunk(DocumentChunk chunk, double score) {}
 
+    @Setter
+    @Getter
     public static class RagAnswer {
         private String documentId;
         private String question;
         private String answer;
         private List<UsedChunk> usedChunks;
 
-        public String getDocumentId() {
-            return documentId;
-        }
-
-        public void setDocumentId(String documentId) {
-            this.documentId = documentId;
-        }
-
-        public String getQuestion() {
-            return question;
-        }
-
-        public void setQuestion(String question) {
-            this.question = question;
-        }
-
-        public String getAnswer() {
-            return answer;
-        }
-
-        public void setAnswer(String answer) {
-            this.answer = answer;
-        }
-
-        public List<UsedChunk> getUsedChunks() {
-            return usedChunks;
-        }
-
-        public void setUsedChunks(List<UsedChunk> usedChunks) {
-            this.usedChunks = usedChunks;
-        }
-
+        @Setter
+        @Getter
         public static class UsedChunk {
             private String documentId;
             private int chunkIndex;
             private double score;
             private String preview;
 
-            public String getDocumentId() {
-                return documentId;
-            }
-
-            public void setDocumentId(String documentId) {
-                this.documentId = documentId;
-            }
-
-            public int getChunkIndex() {
-                return chunkIndex;
-            }
-
-            public void setChunkIndex(int chunkIndex) {
-                this.chunkIndex = chunkIndex;
-            }
-
-            public double getScore() {
-                return score;
-            }
-
-            public void setScore(double score) {
-                this.score = score;
-            }
-
-            public String getPreview() {
-                return preview;
-            }
-
-            public void setPreview(String preview) {
-                this.preview = preview;
-            }
         }
     }
 }

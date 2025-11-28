@@ -1,9 +1,10 @@
 package com.vectoria.vectoriaapi.controller;
 
 import com.vectoria.vectoriaapi.service.LlmClient;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @RequestMapping("/api/llm")
 @CrossOrigin
 public class LlmTestController {
@@ -24,18 +25,15 @@ public class LlmTestController {
         return new ChatResponse(answer);
     }
 
+    @Setter
+    @Getter
     public static class ChatRequest {
         private String prompt;
 
-        public String getPrompt() {
-            return prompt;
-        }
-
-        public void setPrompt(String prompt) {
-            this.prompt = prompt;
-        }
     }
 
+    @Setter
+    @Getter
     public static class ChatResponse {
         private String answer;
 
@@ -43,12 +41,5 @@ public class LlmTestController {
             this.answer = answer;
         }
 
-        public String getAnswer() {
-            return answer;
-        }
-
-        public void setAnswer(String answer) {
-            this.answer = answer;
-        }
     }
 }

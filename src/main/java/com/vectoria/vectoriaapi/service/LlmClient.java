@@ -17,7 +17,11 @@ public class LlmClient {
         this.config = config;
     }
 
-    // chat-METHODE: nimmt einen String, kein List<Map<...>>
+    /**
+     * Text chunken und alle Chunks als DocumentChunk in der DB speichern.
+     *
+     * @return gespeicherte Chunks
+     */
     public String chat(String userMessage) {
         String url = config.getBaseUrl() + "/chat/completions";
 

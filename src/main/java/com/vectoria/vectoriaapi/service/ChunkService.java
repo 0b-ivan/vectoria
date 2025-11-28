@@ -18,12 +18,6 @@ public class ChunkService {
         this.textChunker = new TextChunker();
     }
 
-    /**
-     * Nur chunken, ohne etwas zu speichern.
-     */
-    public List<String> chunkText(String text, int maxWords, int overlapWords) {
-        return textChunker.chunkByWords(text, maxWords, overlapWords);
-    }
 
     /**
      * Text chunken und alle Chunks als DocumentChunk in der DB speichern.

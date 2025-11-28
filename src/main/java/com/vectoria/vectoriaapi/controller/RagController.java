@@ -4,8 +4,10 @@ import com.vectoria.vectoriaapi.service.EmbeddingService;
 import com.vectoria.vectoriaapi.service.RagService;
 import com.vectoria.vectoriaapi.service.RagService.RagAnswer;
 import org.springframework.web.bind.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@RestController
+
 @RequestMapping("/api/rag")
 @CrossOrigin
 public class RagController {
@@ -35,54 +37,20 @@ public class RagController {
 
 
 
+    @Setter
+    @Getter
     public static class RagRequest {
         private String documentId;
         private String question;
         private Integer topK;
 
-        public String getDocumentId() {
-            return documentId;
-        }
-
-        public void setDocumentId(String documentId) {
-            this.documentId = documentId;
-        }
-
-        public String getQuestion() {
-            return question;
-        }
-
-        public void setQuestion(String question) {
-            this.question = question;
-        }
-
-        public Integer getTopK() {
-            return topK;
-        }
-
-        public void setTopK(Integer topK) {
-            this.topK = topK;
-        }
     }
 
+    @Setter
+    @Getter
     public static class EmbedResponse {
         private String documentId;
         private int embeddedChunks;
 
-        public String getDocumentId() {
-            return documentId;
-        }
-
-        public void setDocumentId(String documentId) {
-            this.documentId = documentId;
-        }
-
-        public int getEmbeddedChunks() {
-            return embeddedChunks;
-        }
-
-        public void setEmbeddedChunks(int embeddedChunks) {
-            this.embeddedChunks = embeddedChunks;
-        }
     }
 }
