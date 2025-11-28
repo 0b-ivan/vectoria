@@ -125,11 +125,11 @@ public class ChunkController {
         return ResponseEntity.ok(chunks);
     }
 
-    @GetMapping("/documents")
+@GetMapping("/documents")
     public List<String> getAllDocumentIds() {
         return repository.findAll()
                 .stream()
-                .map(DocumentChunk::getDocumentId)
+                .map(chunk -> (String) chunk.getDocumentId())
                 .distinct()
                 .toList();
     }

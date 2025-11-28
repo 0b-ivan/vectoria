@@ -98,6 +98,6 @@ model_list:
 ## Backend starten
 
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 

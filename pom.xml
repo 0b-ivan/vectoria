@@ -14,53 +14,80 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.2</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- always lookup from repository -->
     </parent>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions zentral verwalten: anpassen auf aktuelle Releases -->
+        <postgresql.version>42.7.7</postgresql.version>
+        <lombok.version>1.18.42</lombok.version>
+        <tomcat.version>10.1.35</tomcat.version>
+        <jackson.version>2.15.2</jackson.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
     </properties>
 
     <dependencies>
-
-        <!-- Spring Web (REST-API) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- PostgreSQL Treiber -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Lombok -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.42</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- Tomcat-Embed-Override, falls ein neu-patchender Tomcat gebraucht wird -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>schema-manuel.sql</exclude>
+                    <!-- oder ein Pfad: <exclude>secrets/**</exclude> -->
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -72,6 +99,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -79,12 +107,9 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.42</version>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <basedir/>
-                    <outputDirectory/>
-                    <projectArtifact/>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,17 +1,19 @@
 spring:
+  sql:
+    init:
+      mode: always     # Führt schema-manuel.sql bei jedem Start aus -> DB-INIT
+      platform: postgres
   datasource:
     url: jdbc:postgresql://localhost:5432/vectoria
     username: postgres
     password: 70304196
 
   jpa:
+    open-in-view: false   # false = Session nicht bis zum View offen halten (empfohlen für REST)
+    # open-in-view: true  # explizit einschalten,um Lazy-Loading während des Renderns zu erlauben
+    properties: {}            # leere Map statt leere String-Zeile
     hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_schema: public
-
+      ddl-auto: update        # oder create-drop, für ein frisch Start der DB
 server:
   port: 8080
 

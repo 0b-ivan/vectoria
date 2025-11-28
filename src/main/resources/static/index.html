@@ -548,7 +548,7 @@
         chatLoadingEl.style.display = "inline";
 
         try {
-            const res = await fetch(apiBase + "/api/llm/chat", {
+            const res = await fetch(apiBase + "/api/rag/ask", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt })
